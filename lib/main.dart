@@ -10,13 +10,14 @@ class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
 
   @override
-  _UserScreenState createState() => _UserScreenState();
+  UserScreenState createState() => UserScreenState();
 }
 
-class _UserScreenState extends State<UserScreen> {
+class UserScreenState extends State<UserScreen> {
   late Future<List<User>> futureUsers;
-  final TextEditingController nameController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   int? editingId;
 
   @override
@@ -32,26 +33,29 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   void handleSave() async {
-    String name = nameController.text;
+    String username = usernameController.text;
     String email = emailController.text;
+    String password = passwordController.text;
 
     if (editingId == null) {
-      await ApiService.addUser(name, email);
+      await ApiService.addUser(username, email, password);
     } else {
-      await ApiService.updateUser(editingId!, name, email);
+      await ApiService.updateUser(editingId!, username, email, password);
       editingId = null;
     }
 
-    nameController.clear();
+    usernameController.clear();
     emailController.clear();
+    passwordController.clear();
     refreshUsers();
   }
 
   void handleEdit(User user) {
     setState(() {
       editingId = user.id;
-      nameController.text = user.name;
+      usernameController.text = user.username;
       emailController.text = user.email;
+      passwordController.text = ''; // Password reset not shown
     });
   }
 
@@ -71,12 +75,17 @@ class _UserScreenState extends State<UserScreen> {
             child: Column(
               children: [
                 TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(labelText: "Name"),
+                  controller: usernameController,
+                  decoration: const InputDecoration(labelText: "Username"),
                 ),
                 TextField(
                   controller: emailController,
                   decoration: const InputDecoration(labelText: "Email"),
+                ),
+                TextField(
+                  controller: passwordController,
+                  decoration: const InputDecoration(labelText: "Password"),
+                  obscureText: true,
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
@@ -99,7 +108,7 @@ class _UserScreenState extends State<UserScreen> {
                 return ListView(
                   children: snapshot.data!.map((user) {
                     return ListTile(
-                      title: Text(user.name),
+                      title: Text(user.username),
                       subtitle: Text(user.email),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
