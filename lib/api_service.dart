@@ -15,6 +15,9 @@ class ApiService {
     }
   }
 
+
+// Username, Email, Password
+
   static Future<void> addUser(String username, String email, String password) async {
     await http.post(
       Uri.parse(baseUrl),
