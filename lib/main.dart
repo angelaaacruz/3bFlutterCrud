@@ -55,7 +55,7 @@ class UserScreenState extends State<UserScreen> {
       editingId = user.id;
       usernameController.text = user.username;
       emailController.text = user.email;
-      passwordController.text = ''; // not to show the password
+      passwordController.text = '';
     });
   }
 
